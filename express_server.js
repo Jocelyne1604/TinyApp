@@ -23,6 +23,12 @@ app.get("/hello", (req, res) => {
     res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+//pass along the urlDatabase to the template
+app.get("/urls", (req, res) => {
+    let templateVars = { urls: urlDatabase };
+    res.render("urls_index", templateVars);
+});
+
 //app.listen opens port from my terminal
 app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}!`);
