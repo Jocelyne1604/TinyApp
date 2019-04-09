@@ -23,6 +23,13 @@ app.get("/hello", (req, res) => {
     res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+//Route Parameter for short urls
+app.get("/urls/:shortURL", (req, res) => {
+    //pass the short url "format"
+    let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase/* What goes here? */ };
+    res.render("urls_show", templateVars);
+});
+
 //pass along the urlDatabase to the template
 app.get("/urls", (req, res) => {
     let templateVars = { urls: urlDatabase };
