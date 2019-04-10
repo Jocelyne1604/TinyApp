@@ -19,9 +19,13 @@
 <ul>
     <% for (var key in urls) { %>
         <li><%= key %> - <%= href = urls[key] %> </li>
+        <form method="POST" action="<%= `/urls/${key}/delete`%>">
+        <button>delete</button>
+        </form>
+
     <% }; %>
 </ul>
-    
+
     
 </body>
 </html>
