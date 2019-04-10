@@ -19,9 +19,12 @@
 
 
 <p>
-    <%= shortURL %>
+  <%=shortURL %>
 
 </p>
-    
+    <form method="POST" action="/urls/<%=shortURL %>">
+    <input id="adress" name="adress" value="" placeholder="new adress"/>
+    <button type="submit" title="Edit">Edit</a>
+    </form>
 </body>
 </html>

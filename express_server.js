@@ -18,6 +18,16 @@ app.listen(PORT, () => {
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 
+function generateRandomString() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+    for (var i = 0; i < 6; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
+
 //app.get are different response depending on wich root i am getting
 app.get("/", (req, res) => {
     res.send("Hello!");
@@ -31,10 +41,12 @@ app.get("/hello", (req, res) => {
     res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
-//Route Parameter for input form
-app.get("/urls/new", (req, res) => {
-    res.render("urls_new");
+//pass along the urlDatabase to the template
+app.get("/urls", (req, res) => {
+    let templateVars = { urls: urlDatabase };
+    res.render("urls_index", templateVars);
 });
+
 app.post("/urls", (req, res) => {
     var shortURLVar = generateRandomString();
     console.log(req.body);
@@ -43,31 +55,10 @@ app.post("/urls", (req, res) => {
     res.redirect("/urls/" + shortURLVar);         // Respond with 'Ok' (we will replace this)
 });
 
-app.post("/urls/:shortURL/delete", (req, res) => {
-    const deleteURL = req.params.shortURL;
-    delete urlDatabase[deleteURL];
-    res.redirect("/urls");
+//Route Parameter for input form
+app.get("/urls/new", (req, res) => {
+    res.render("urls_new");
 });
-
-app.get("/u/:shortURL", (req, res) => {
-    const longURL = urlDatabase[req.params.shortURL];
-    res.redirect(longURL);
-    console.log(longURL);
-});
-
-
-// app.get("/urls/:id", (req, res) => {
-//     let templateVars = { urls: urlDatabase };
-//     res.render("urls_index", templateVars);
-// });
-
-//pass along the urlDatabase to the template
-app.get("/urls", (req, res) => {
-    let templateVars = { urls: urlDatabase };
-    res.render("urls_index", templateVars);
-});
-
-
 
 //Route Parameter for short urls
 app.get("/urls/:shortURL", (req, res) => {
@@ -76,16 +67,30 @@ app.get("/urls/:shortURL", (req, res) => {
     res.render("urls_show", templateVars);
 });
 
-function generateRandomString() {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+app.post("/urls/:shortURL/delete", (req, res) => {
+    const deleteURL = req.params.shortURL;
+    delete urlDatabase[deleteURL];
+    res.redirect("/urls");
+});
 
-    for (var i = 0; i < 6; i++)
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
+//edit button
+app.post("/urls/:shortURL", (req, res) => {
+    const editURL = req.params.shortURL;
+    const updateLongURL = req.body.adress;
+    console.log(editURL);
 
-    return text;
-}
+    for (var key in urlDatabase) {
+        if (key === editURL) {
+            urlDatabase[key] = updateLongURL;
+        }
+    };
+    res.redirect("/urls");
+});
 
-
+app.get("/u/:shortURL", (req, res) => {
+    const longURL = urlDatabase[req.params.shortURL];
+    res.redirect(longURL);
+    console.log(longURL);
+});
 
 
