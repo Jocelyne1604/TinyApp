@@ -54,6 +54,10 @@ app.post("/urls", (req, res) => {
     console.log(urlDatabase);  // Log the POST request body to the console
     res.redirect("/urls/" + shortURLVar);         // Respond with 'Ok' (we will replace this)
 });
+app.post("/urls/login", function (req, res) {
+    const username = req.cookie.username;
+    res.redirect("/urls");
+});
 
 //Route Parameter for input form
 app.get("/urls/new", (req, res) => {
