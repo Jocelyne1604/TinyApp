@@ -36,9 +36,19 @@ app.get("/urls/new", (req, res) => {
     res.render("urls_new");
 });
 app.post("/urls", (req, res) => {
-    console.log(req.body);  // Log the POST request body to the console
-    res.send("Ok");         // Respond with 'Ok' (we will replace this)
+    var shortURLVar = generateRandomString();
+    console.log(req.body);
+    urlDatabase[shortURLVar] = req.body.longURL;
+    console.log(urlDatabase);  // Log the POST request body to the console
+    res.redirect("/urls/" + shortURLVar);         // Respond with 'Ok' (we will replace this)
 });
+
+app.get("/u/:shortURL", (req, res) => {
+    const longURL = urlDatabase[req.params.shortURL];
+    res.redirect(longURL);
+    console.log(longURL);
+});
+
 // app.get("/urls/:id", (req, res) => {
 //     let templateVars = { urls: urlDatabase };
 //     res.render("urls_index", templateVars);
@@ -63,13 +73,12 @@ function generateRandomString() {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-    for (var i = 0; i < length; i++)
+    for (var i = 0; i < 6; i++)
         text += possible.charAt(Math.floor(Math.random() * possible.length));
 
     return text;
 }
 
-console.log(generateRandomString(6));
-}
+
 
 
