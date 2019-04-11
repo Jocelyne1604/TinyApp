@@ -54,8 +54,10 @@ app.post("/urls", (req, res) => {
     console.log(urlDatabase);  // Log the POST request body to the console
     res.redirect("/urls/" + shortURLVar);         // Respond with 'Ok' (we will replace this)
 });
-app.post("/urls/login", function (req, res) {
-    const username = req.cookie.username;
+app.post("/login", function (req, res) {
+    const username = req.body.username;
+    console.log(username);
+    res.cookie("username", username);
     res.redirect("/urls");
 });
 
