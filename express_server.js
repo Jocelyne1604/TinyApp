@@ -51,6 +51,11 @@ app.get("/urls", (req, res) => {
     res.render("urls_index", templateVars);
 });
 
+//Register page
+app.get("/register", (req, res) => {
+    res.render("register");
+});
+
 //Route Parameter for input form / add cookie  template to main routs
 app.get("/urls/new", (req, res) => {
     let templateVars = { username: req.cookies["username"] };
@@ -107,6 +112,14 @@ app.post("/login", function (req, res) {
     res.cookie("username", username);
     res.redirect("/urls");
 });
+
+// //pass along the username and password for register page
+// app.post("/login", function (req, res) {
+//     const username = req.body.username;
+//     console.log(username);
+//     res.cookie("username", username);
+//     res.redirect("/urls");
+// });
 
 // logout and clear cookie
 app.post("/logout", function (req, res) {
