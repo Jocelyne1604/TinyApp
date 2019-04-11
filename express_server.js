@@ -13,6 +13,19 @@ var urlDatabase = {
     "b2xVn2": "http://www.lighthouselabs.ca",
     "9sm5xK": "http://www.google.com"
 };
+
+const users = {
+    "userRandomID": {
+        id: "userRandomID",
+        email: "user@example.com",
+        password: "purple-monkey-dinosaur"
+    },
+    "user2RandomID": {
+        id: "user2RandomID",
+        email: "user2@example.com",
+        password: "dishwasher-funk"
+    }
+}
 //app.listen opens port from my terminal
 app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}!`);
@@ -53,6 +66,7 @@ app.get("/urls", (req, res) => {
 
 //Register page
 app.get("/register", (req, res) => {
+    // let templateVars = { email: req.body[email], password: req.body.password };
     res.render("register");
 });
 
@@ -113,13 +127,15 @@ app.post("/login", function (req, res) {
     res.redirect("/urls");
 });
 
-// //pass along the username and password for register page
-// app.post("/login", function (req, res) {
-//     const username = req.body.username;
-//     console.log(username);
-//     res.cookie("username", username);
-//     res.redirect("/urls");
-// });
+//pass along the username and password for register page
+app.post("/register", function (req, res) {
+    const email = req.body.email;
+    const password = req.body.password;
+    // res.cookie("email", email);
+    // res.cookie("password", password);
+    // res.redirect("/urls");
+    res.redirect("/urls");
+});
 
 // logout and clear cookie
 app.post("/logout", function (req, res) {
