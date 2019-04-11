@@ -1,9 +1,13 @@
 var express = require("express");
 var app = express();
 var PORT = 8080; // default port 8080
+var cookieParser = require('cookie-parser')
 
 //This tells the Express app to use EJS as its templating engine. 
 app.set("view engine", "ejs");
+
+app.use(cookieParser())
+
 
 var urlDatabase = {
     "b2xVn2": "http://www.lighthouselabs.ca",
@@ -41,11 +45,32 @@ app.get("/hello", (req, res) => {
     res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
-//pass along the urlDatabase to the template
+//pass along the urlDatabase to the template // added cookie template
 app.get("/urls", (req, res) => {
-    let templateVars = { urls: urlDatabase };
+    let templateVars = { username: req.cookies["username"], urls: urlDatabase };
     res.render("urls_index", templateVars);
 });
+
+//Route Parameter for input form / add cookie  template to main routs
+app.get("/urls/new", (req, res) => {
+    let templateVars = { username: req.cookies["username"] };
+    res.render("urls_new", templateVars);
+});
+
+//Route Parameter for short urls /  add cookie template to main routs
+app.get("/urls/:shortURL", (req, res) => {
+    //pass the short url "format"
+    let templateVars = { username: req.cookies["username"], shortURL: req.params.shortURL, longURL: urlDatabase };
+    res.render("urls_show", templateVars);
+});
+
+
+app.get("/u/:shortURL", (req, res) => {
+    const longURL = urlDatabase[req.params.shortURL];
+    res.redirect(longURL);
+    console.log(longURL);
+});
+
 
 app.post("/urls", (req, res) => {
     var shortURLVar = generateRandomString();
@@ -53,30 +78,6 @@ app.post("/urls", (req, res) => {
     urlDatabase[shortURLVar] = req.body.longURL;
     console.log(urlDatabase);  // Log the POST request body to the console
     res.redirect("/urls/" + shortURLVar);         // Respond with 'Ok' (we will replace this)
-});
-app.post("/login", function (req, res) {
-    const username = req.body.username;
-    console.log(username);
-    res.cookie("username", username);
-    res.redirect("/urls");
-});
-
-//Route Parameter for input form
-app.get("/urls/new", (req, res) => {
-    res.render("urls_new");
-});
-
-//Route Parameter for short urls
-app.get("/urls/:shortURL", (req, res) => {
-    //pass the short url "format"
-    let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase/* What goes here? */ };
-    res.render("urls_show", templateVars);
-});
-
-app.post("/urls/:shortURL/delete", (req, res) => {
-    const deleteURL = req.params.shortURL;
-    delete urlDatabase[deleteURL];
-    res.redirect("/urls");
 });
 
 //edit button
@@ -93,10 +94,28 @@ app.post("/urls/:shortURL", (req, res) => {
     res.redirect("/urls");
 });
 
-app.get("/u/:shortURL", (req, res) => {
-    const longURL = urlDatabase[req.params.shortURL];
-    res.redirect(longURL);
-    console.log(longURL);
+
+app.post("/urls/:shortURL/delete", (req, res) => {
+    const deleteURL = req.params.shortURL;
+    delete urlDatabase[deleteURL];
+    res.redirect("/urls");
 });
+
+app.post("/login", function (req, res) {
+    const username = req.body.username;
+    console.log(username);
+    res.cookie("username", username);
+    res.redirect("/urls");
+});
+
+// logout and clear cookie
+app.post("/logout", function (req, res) {
+    res.clearCookie('username');
+    res.redirect("/urls");
+});
+
+
+
+
 
 

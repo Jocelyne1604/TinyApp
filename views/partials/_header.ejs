@@ -2,16 +2,27 @@
 <html lang="en">
 
 <header>
-Example
-<form method="POST" action="<%= `/login`%>">
+
+ TinyApp</h1>
+
+  <% if (!username ) {%> 
+  <form method="POST" action="<%=`/login`%>">
   Username:<br>
-  <input  type="text" name="username">
+     <label for="Username">  Name: </label>
+  <input  type="text" name="username" placeholder = "Username">
   <input type="submit" value="Submit">
+ <% } else { %>
+    <p>Hello <%= username %></p>
+  <form method="POST" action="<%=`/logout`%>">
+    <button type="submit" value="logout" action="/logout">Log out</button>
 
 </form>
+<% }; %>
 
-<h1>TinyApp</h1>
+
 </header>
 
 
 </html>
+
+
