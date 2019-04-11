@@ -14,18 +14,8 @@ var urlDatabase = {
     "9sm5xK": "http://www.google.com"
 };
 
-const users = {
-    "userRandomID": {
-        id: "userRandomID",
-        email: "user@example.com",
-        password: "purple-monkey-dinosaur"
-    },
-    "user2RandomID": {
-        id: "user2RandomID",
-        email: "user2@example.com",
-        password: "dishwasher-funk"
-    }
-}
+const users = {};
+
 //app.listen opens port from my terminal
 app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}!`);
@@ -129,11 +119,13 @@ app.post("/login", function (req, res) {
 
 //pass along the username and password for register page
 app.post("/register", function (req, res) {
+    const userId = generateRandomString();
     const email = req.body.email;
     const password = req.body.password;
-    // res.cookie("email", email);
-    // res.cookie("password", password);
-    // res.redirect("/urls");
+    const user = { userId, email, password };
+    users[userId] = user;
+
+    res.cookie("userId", userId);
     res.redirect("/urls");
 });
 
@@ -142,9 +134,3 @@ app.post("/logout", function (req, res) {
     res.clearCookie('username');
     res.redirect("/urls");
 });
-
-
-
-
-
-
