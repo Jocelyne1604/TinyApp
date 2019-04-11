@@ -124,7 +124,11 @@ app.post("/register", function (req, res) {
     const password = req.body.password;
     const user = { userId, email, password };
     users[userId] = user;
+    if (email === '' || password === '') {
+        res.status(400);
+        res.send("<html><body>Invalid Email, Please enter a valid Email</body></html>\n");
 
+    }
     res.cookie("userId", userId);
     res.redirect("/urls");
 });
