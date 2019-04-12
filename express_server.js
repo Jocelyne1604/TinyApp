@@ -8,32 +8,37 @@ app.set("view engine", "ejs");
 
 app.use(cookieParser())
 
-
 var urlDatabase = {
     "b2xVn2": "http://www.lighthouselabs.ca",
     "9sm5xK": "http://www.google.com"
 };
 
-const users = {};
+const users = {
+    "userRandomID": {
+        id: "userRandomID",
+        email: "user@example.com",
+        password: "purple-monkey-dinosaur"
+    },
+    "user2RandomID": {
+        id: "user2RandomID",
+        email: "user2@example.com",
+        password: "dishwasher-funk"
+    }
+};
 
 //app.listen opens port from my terminal
 app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}!`);
 });
 
+app.get("/login", (req, res) => {
+    let templateVars = { user: users[req.cookies["user_id"]] };
+    res.render("urls_login", templateVars);
+});
+
 //Body parser to make POST data readable
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
-
-function generateRandomString() {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-
-    for (var i = 0; i < 6; i++)
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-    return text;
-}
 
 //app.get are different response depending on wich root i am getting
 app.get("/", (req, res) => {
@@ -50,26 +55,27 @@ app.get("/hello", (req, res) => {
 
 //pass along the urlDatabase to the template // added cookie template
 app.get("/urls", (req, res) => {
-    let templateVars = { username: req.cookies["username"], urls: urlDatabase };
+    let templateVars = { user: users[req.cookies["user_id"]], urls: urlDatabase };
+    console.log(users[req.cookies["user_id"]]);
     res.render("urls_index", templateVars);
 });
 
 //Register page
 app.get("/register", (req, res) => {
-    // let templateVars = { email: req.body[email], password: req.body.password };
-    res.render("register");
+    let templateVars = { user: users[req.cookies["user_id"]], urls: urlDatabase };
+    res.render("urls_register", templateVars);
 });
 
 //Route Parameter for input form / add cookie  template to main routs
 app.get("/urls/new", (req, res) => {
-    let templateVars = { username: req.cookies["username"] };
+    let templateVars = { user: users[req.cookies["user_id"]] };
     res.render("urls_new", templateVars);
 });
 
 //Route Parameter for short urls /  add cookie template to main routs
 app.get("/urls/:shortURL", (req, res) => {
     //pass the short url "format"
-    let templateVars = { username: req.cookies["username"], shortURL: req.params.shortURL, longURL: urlDatabase };
+    let templateVars = { user: users[req.cookies["user_id"]], shortURL: req.params.shortURL, longURL: urlDatabase };
     res.render("urls_show", templateVars);
 });
 
@@ -103,7 +109,6 @@ app.post("/urls/:shortURL", (req, res) => {
     res.redirect("/urls");
 });
 
-
 app.post("/urls/:shortURL/delete", (req, res) => {
     const deleteURL = req.params.shortURL;
     delete urlDatabase[deleteURL];
@@ -111,30 +116,70 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 app.post("/login", function (req, res) {
-    const username = req.body.username;
-    console.log(username);
-    res.cookie("username", username);
+    let user = returnUserId(req.body["email"]);
+    console.log(user);
+    res.cookie("user_id", user.id);
     res.redirect("/urls");
 });
 
 //pass along the username and password for register page
-app.post("/register", function (req, res) {
-    const userId = generateRandomString();
-    const email = req.body.email;
-    const password = req.body.password;
-    const user = { userId, email, password };
-    users[userId] = user;
+//  
+app.post("/register", (req, res) => {
+    const { email, password } = req.body;
     if (email === '' || password === '') {
         res.status(400);
-        res.send("<html><body>Invalid Email, Please enter a valid Email</body></html>\n");
-
+        res.send("<html><body>Email or password blank</body></html>\n");
+    } else if (hasDuplicates(email) === true) {
+        res.status(403);
+        res.send("<html><body>Email already exists</body></html>\n");
+    } else {
+        const id = generateRandomString();
+        users[id] = {
+            id,
+            email,
+            password
+        };
+        res.cookie("user_id", id);
+        res.redirect("/urls");
     }
-    res.cookie("userId", userId);
-    res.redirect("/urls");
 });
+
 
 // logout and clear cookie
 app.post("/logout", function (req, res) {
-    res.clearCookie('username');
+    res.clearCookie('user_id');
     res.redirect("/urls");
 });
+
+//loops through email database to check duplicates
+function hasDuplicates(email) {
+    for (var differentUsers in users) {
+        if (email === users[differentUsers]["email"]) {
+            return true;
+        };
+    } return false;
+};
+
+function generateRandomString() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+    for (var i = 0; i < 6; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
+
+function returnUserId(username) {
+    for (var user in users) {
+
+        if (users[user].email === username) {
+
+            return users[user];
+
+        }
+    }
+    return undefined;
+}
+
+

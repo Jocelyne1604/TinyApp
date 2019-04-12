@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<header>
+<% include ./partials/_header %>
+
+<h4>Login page</h4>
+
+<form method="POST" action="<%=`/login`%>">
+      <label for="email">Email</label>
+   <input type=email name=email placeholder=email >
+      <label for="password">Password</label>
+
+   <input type=password name=password placeholder=password >
+   
+   <button>login</button>
+</form>
+</div>
+</header>
