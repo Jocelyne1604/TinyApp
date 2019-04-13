@@ -1,30 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-<% include ./partials/_header %>
-
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <title>TinyApp</title>
-  <a href=#>Create a new TinyURL</a>
 
 </head>
 <body style="font-size:20px; padding:50px;">
+ <h1>TinyApp</h1>
+            <a  href="/urls">My URLs</a>
+            <a> | </a>
+            <a href="/urls/new">Create a new TinyURL</a>
+ 
     <!-- Add EJS code here -->
-       <h2>TinyURL for <%=longURL[shortURL]%></h2>
-
+       <h2>Success! TinyURL for <%=longURL[shortURL].longURL %></h2>
 
 <p>
   <%=shortURL %>
-
 </p>
     <form method="POST" action="/urls/<%=shortURL %>">
     <input id="adress" name="adress" value="" placeholder="new adress"/>
-    <button type="submit" title="Edit">Edit</a>
+    <button class="btn btn-primary" type="submit" title="Edit">Edit</a>
     </form>
 </body>
 </html>
