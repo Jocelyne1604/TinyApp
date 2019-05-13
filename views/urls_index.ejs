@@ -1,56 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+  <link rel = "stylesheet" type = "text/css" href = "/Users/eltahanjocelyne/Desktop/lighthouse/w2d2/TinyApp/views/style.css" />
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <title>TinyApp</title>
 
 </head>
-<body style="font-size:20px; padding:50px;">
- <h1>TinyApp</h1>
-
- 
-  <% if (!user ) {%> 
-  <form method="POST" action="<%=`/login`%>">
-<a  href="/login">Login</a>
-<a> | </a>
-<a  href="/register">register</a>
-
- <% } else { %>
- <a  href="/urls">URLs</a>
-<a> | </a>
-  <a href="/urls/new">Create a new TinyURL</a>
-    <p>Hello <%= user.email %></p>
-
-  <form method="POST" action="<%=`/logout`%>">
-    <button class="btn btn-primary" type="submit" value="logout" action="/logout">Log out</button>
-
-</form>
-<% }; %>
-</body>
-
-
-</head>
 
 <body style="font-size:20px; padding:50px;">
+  
+  <h1>TinyApp</h1>
+  
+    <% if (typeof user !== 'object' && user) { %> 
+  
+      <form method="POST" action="<%=`/login`%>">
+        <a  href="/login">Login</a>
+        <a> | </a>
+        <a  href="/register">register</a>
+      </form>
 
+    <% } else { %>
+    
+      <a  href="/urls">URLs</a>
+      <a> | </a>
+      <a href="/urls/new">Create a new TinyURL</a>
+      <p>Hello <%= user %></p>
 
-    <!-- Add EJS code here -->
-    <h2>My Urls</h2>
-<ul>
-    <% for (var key in urls) { %>
+      <form method="POST" action="<%=`/logout`%>">
+        <button class="btn btn-primary" type="submit" value="logout" action="/logout">Log out</button>
+      </form>
+    <% }; %>
+
+  <!-- Add EJS code here -->
+  <h2>My Urls</h2>
+    <ul>
+      <% for (var key in urls) { %>
         <li><%= key %> - <%= urls[key]["longURL"] %> </li>
         <form method="POST" action="<%= `/urls/${key}/delete`%>">
-        <a  href =  "<%= `/urls/${key} `%> ">Edit</a>
-        <button class="btn btn-primary">delete</button>
+          <a  href =  "<%= `/urls/${key} `%> ">Edit</a>
+          <button class="btn btn-primary">delete</button>
         </form>
-
-    <% }; %>
-</ul>
-
-    
+      <% }; %>
+    </ul>
 </body>
 </html>

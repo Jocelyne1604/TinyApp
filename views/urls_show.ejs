@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel = "stylesheet" type = "text/css" href = "/Users/eltahanjocelyne/Desktop/lighthouse/w2d2/TinyApp/views/style.css" />
 
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
@@ -18,11 +19,12 @@
     <!-- Add EJS code here -->
        <h2>Success! TinyURL for <%=longURL[shortURL].longURL %></h2>
 
+
 <p>
   <%=shortURL %>
 </p>
     <form method="POST" action="/urls/<%=shortURL %>">
-    <input id="adress" name="adress" value="" placeholder="new adress"/>
+    <input id="adress" name="longURL" value="" placeholder="new adress"/>
     <button class="btn btn-primary" type="submit" title="Edit">Edit</a>
     </form>
 </body>
