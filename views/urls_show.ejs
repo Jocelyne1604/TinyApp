@@ -3,29 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel = "stylesheet" type = "text/css" href = "/Users/eltahanjocelyne/Desktop/lighthouse/w2d2/TinyApp/views/style.css" />
-
-  <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <title>TinyApp</title>
-
 </head>
+
 <body style="font-size:20px; padding:50px;">
- <h1>TinyApp</h1>
-            <a  href="/urls">My URLs</a>
-            <a> | </a>
-            <a href="/urls/new">Create a new TinyURL</a>
+  <a  href="/urls">My URLs</a>
+  <a> | </a>
+  <a href="/urls/new">Create a new TinyURL</a>
  
-    <!-- Add EJS code here -->
-       <h2>Success! TinyURL for <%=longURL[shortURL].longURL %></h2>
+  <h2>Success! TinyURL for <%=longURL[shortURL].longURL %></h2>
 
+  <p>
+    <%=shortURL %>
+  </p>
 
-<p>
-  <%=shortURL %>
-</p>
-    <form method="POST" action="/urls/<%=shortURL %>">
+  <form method="POST" action="/urls/<%=shortURL %>">
     <input id="adress" name="longURL" value="" placeholder="new adress"/>
     <button class="btn btn-primary" type="submit" title="Edit">Edit</a>
-    </form>
+  </form>
 </body>
 </html>

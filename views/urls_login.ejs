@@ -1,31 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-
-
-<header>
-<% include ./partials/_header %>
-
-
+<head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel = "stylesheet" type = "text/css" href = "/Users/eltahanjocelyne/Desktop/lighthouse/w2d2/TinyApp/views/style.css" />
-
-  <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <title>TinyApp</title>
 
+<% include ./partials/_header %>
+
+</head>
+
 <h4>Login page</h4>
-</header>
+
 <body>
-
-    
-<form method="POST" action="<%=`/login`%>">
+   <form method="POST" action="<%=`/login`%>">
       <label for="email">Email</label>
-   <input type=email name=email placeholder=email >
+      <input type=email name=email placeholder=email >
       <label for="password">Password</label>
-   <input type=password name=password placeholder=password >
-   <button class="btn btn-primary">login</button>
-</form>
-
-</div>
+      <input type=password name=password placeholder=password >
+      <button class="btn btn-primary">login</button>
+   </form>
 </body>
