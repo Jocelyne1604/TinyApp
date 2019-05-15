@@ -37,7 +37,7 @@ app.use(
 //loops through database to check duplicates
 function hasDuplicates(propertyToSearch, property) {
   for (var differentUsers in users) {
-    if (propertyToSearch === users[userids][property]) {
+    if (propertyToSearch === users[differentUsers][property]) {
       return true;
     }
   }
@@ -113,8 +113,11 @@ app.get("/urls", (req, res) => {
       user_id: req.session.user_id,
       urlDatabase: urlDatabase,
       urls: urlsForUser(req.session.user_id),
-      user: null || req.session.user
+      user: req.session.user
     };
+    const user_id = req.session.user_id;
+    const user = req.session.user;
+    const email = req.session.email;
     res.render("urls_index", templateVars);
   } else {
     res.render("urls_login", { user: null });
@@ -185,6 +188,7 @@ app.get("/register", (req, res) => {
 
 app.post("/urls", (req, res) => {
   var shortURLVar = generateRandomString();
+  const email = req.body.email;
   urlDatabase[shortURLVar] = {
     longURL: req.body.longURL,
     userID: req.session.user_id,
@@ -235,15 +239,17 @@ app.post("/login", (req, res) => {
 //pass along the username and password for register page
 //
 app.post("/register", (req, res) => {
+  const user_id = req.session.user_id;
   const email = req.body.email;
   const password = req.body.password;
+  const user = req.session.user;
   const hashedPassword = bcrypt.hashSync(password, 10);
   if (email === "" || password === "") {
     res.status(400);
-    res.send("<html><body>Email or password blank</body></html>\n");
+    res.send("<html><body>Email or password cannot be blank</body></html>\n");
   } else if (hasDuplicates(email, "email") === true) {
     res.status(403);
-    res.send("<html><body>Email already exists</body></html>\n");
+    res.send("<html><body>Email already exists please login</body></html>\n");
   } else {
     console.log("register user");
     const id = generateRandomString();
@@ -253,6 +259,7 @@ app.post("/register", (req, res) => {
       email: email,
       password: hashedPassword
     };
+
     req.session.user_id = id;
     res.redirect("/urls");
   }

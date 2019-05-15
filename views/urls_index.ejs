@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <title>TinyApp</title>
+
 </head>
 
 <body style="font-size:20px; padding:50px;">
@@ -12,16 +13,12 @@
   <h1>TinyApp</h1>
   
     <% if (typeof user !== 'object' && user) { %> 
-      <form method="POST" action="<%=`/login`%>">
-        <a  href="/login">Login</a>
-        <a> | </a>
-        <a  href="/register">register</a>
-      </form>
+    <% include ./partials/_header %>
     <% } else { %>    
       <a  href="/urls">URLs</a>
       <a> | </a>
       <a href="/urls/new">Create a new TinyURL</a>
-      <p>Hello <%= user %></p>
+      <p>Hello <%= user%></p>
       <form method="POST" action="<%=`/logout`%>">
         <button class="btn btn-primary" type="submit" value="logout" action="/logout">Log out</button>
       </form>
