@@ -4,10 +4,10 @@ The app is a full stack web application built with Node and Express that allows 
 
 # Screenshots
 
-![Login page](./img/Screen Shot 2019-05-15 at 5.37.14 PM.png "Login page")
-![Main page](/img/Screen Shot 2019-05-15 at 5.39.08 PM.png "Main page")
-![Create a new short URL](/img/Screen Shot 2019-05-15 at 5.38.37 PM.png "Create a new short URL")
-![Success](/img/Screen Shot 2019-05-15 at 5.38.14 PM.png "Success")
+![Login page](img/login-page.png "Login page")
+![Main page](img/main_page.png "Main page")
+![Create a new short URL](img/create_a_new_short_URL.png "Create a new short URL")
+![Success](img/success.png "Success")
 
 # Dependencies
 
