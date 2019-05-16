@@ -143,9 +143,10 @@ app.get("/u/:shortURL", (req, res) => {
     user_id: req.session.user_id,
     shortURL: req.params.shortURL,
     urlDatabase: urlDatabase,
-    user: users
+    user: users,
+    longURL: urlDatabase
   };
-  res.render("urls_show", templateVars);
+  res.redirect("/urls/:shortURL", templateVars);
 });
 
 //Route Parameter for short urls /  add cookie template to main routs
