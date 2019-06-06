@@ -35,13 +35,12 @@ app.use(
  ***************************************/
 
 //loops through database to check duplicates
-function hasDuplicates(propertyToSearch, property) {
-  for (var differentUsers in users) {
-    if (propertyToSearch === users[differentUsers][property]) {
+function searchUserInfo(thingToSearch, type) {
+  for (const currentUser in users) {
+    if (thingToSearch == users[currentUser][type]) {
       return true;
     }
   }
-  return false;
 }
 
 function generateRandomString() {
@@ -52,38 +51,33 @@ function generateRandomString() {
   return text;
 }
 
-function returnUserId(email) {
+//Seach any user info on User Database
+function searchUserInfo(thingToSearch, type) {
+  for (const currentUser in users) {
+    if (thingToSearch == users[currentUser][type]) {
+      return true;
+    }
+  }
+}
+
+//Check if PW and email match DB
+function UserPWVerifier(email, pw) {
   for (var user in users) {
-    if (users[user].email === email) {
-      return users[user];
-    }
-  }
-  return undefined;
-}
-
-function urlsForUser(id) {
-  const userURLs = {};
-  for (let shortURL in urlDatabase) {
-    if (urlDatabase[shortURL].userID === id) {
-      userURLs[shortURL] = urlDatabase[shortURL];
-    }
-  }
-  return userURLs;
-}
-
-//verifies the email and password of the user
-function userCheker(email, password) {
-  for (let user in users) {
-    let passwordInput = users[user]["password"];
-    if (
-      users[user]["email"] === email &&
-      bcrypt.compareSync(password, passwordInput)
-    ) {
-      const generatedID = users[user]["id"];
-      return generatedID;
+    let comparingPW = users[user]["password"];
+    if (users[user]["email"] === email && bcrypt.compareSync(pw, comparingPW)) {
+      const CheckID = users[user]["id"];
+      return CheckID;
     }
   }
   return false;
+}
+
+function checkURLFix(url) {
+  if (url.match(/^http:/)) {
+    return url;
+  } else {
+    return "http://" + url;
+  }
 }
 
 /****************************************
@@ -110,76 +104,61 @@ app.get("/", (req, res) => {
 app.get("/urls", (req, res) => {
   if (req.session.user_id) {
     let templateVars = {
-      user_id: req.session.user_id,
-      urlDatabase: urlDatabase,
-      urls: urlsForUser(req.session.user_id),
-      user: req.session.user
+      currentUser: req.session.user_id,
+      users: users,
+      userID: req.session.user_id,
+      urls: urlDatabase
     };
-    const user_id = req.session.user_id;
-    const user = req.session.user;
-    const email = req.session.email;
     res.render("urls_index", templateVars);
   } else {
-    res.render("urls_login", { user: null });
+    res
+      .status(400)
+      .send(
+        "To have access to your TinyApp URLs please log in at: localhost:8080/login"
+      );
   }
 });
 
 //Route Parameter for input form / add cookie  template to main routs
 app.get("/urls/new", (req, res) => {
-  let templateVars = {
-    user: users[req.session.user],
-    urls: urlDatabase.longURL,
-    user_id: req.session.user_id
-  };
-  if (!req.session.user_id) {
-    res.redirect("/login");
-  } else {
+  if (req.session.user_id) {
+    let templateVars = { users: users, userID: req.session.user_id };
     res.render("urls_new", templateVars);
+  } else {
+    res.redirect("/login");
   }
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  let templateVars = {
-    user_id: req.session.user_id,
-    shortURL: req.params.shortURL,
-    urlDatabase: urlDatabase,
-    user: users,
-    longURL: urlDatabase
-  };
-  res.redirect("/urls/:shortURL", templateVars);
+  res.redirect(`${urlDatabase[req.params.shortURL]["longURL"]}`);
 });
 
 //Route Parameter for short urls /  add cookie template to main routs
 app.get("/urls/:shortURL", (req, res) => {
   //pass the short url "format"
   let templateVars = {
-    user: req.session.user,
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase
+    users: users,
+    urlDatabase: urlDatabase,
+    userID: req.session.user_id,
+    URLkey: req.params.shortURL
   };
   res.render("urls_show", templateVars);
 });
 
 app.get("/login", (req, res) => {
-  if (!req.session.user_id) {
-    let templateVars = {
-      user: null || req.session.user
-    };
-    res.render("urls_login", templateVars);
-  } else {
+  if (req.session.user_id) {
     res.redirect("/urls");
+  } else {
+    res.render("urls_login");
   }
 });
 
 //Register page
 app.get("/register", (req, res) => {
-  if (!req.session.user_id) {
-    let templateVars = {
-      user: null || req.session.user
-    };
-    res.render("urls_register", templateVars);
-  } else {
+  if (req.session.user_id) {
     res.redirect("/urls");
+  } else {
+    res.render("urls_register");
   }
 });
 
@@ -188,29 +167,24 @@ app.get("/register", (req, res) => {
  ***************************************/
 
 app.post("/urls", (req, res) => {
-  var shortURLVar = generateRandomString();
-  const email = req.body.email;
-  urlDatabase[shortURLVar] = {
-    longURL: req.body.longURL,
-    userID: req.session.user_id,
-    user: req.session.user
-  };
-  res.redirect("/urls/" + shortURLVar);
+  const uniqueID = generateRandomString();
+  tempObj = {};
+  tempObj.longURL = checkURLFix(req.body.longURL);
+  tempObj.userID = req.session.user_id;
+  urlDatabase[uniqueID] = tempObj;
+  res.redirect("/urls/" + uniqueID);
 });
 
 //edit button
 //CHECK THAT THE USER IS LOGGED IN IF CONDITION
 // =>>>>>>>>
 app.post("/urls/:shortURL", (req, res) => {
-  const editURL = req.params.shortURL;
-  const updateLongURL = req.body.longURL;
-  console.log("editURL", editURL);
-  console.log("updateLongURL", updateLongURL);
-  if (urlDatabase[editURL]["userID"] === req.session.user_id) {
-    for (var key in urlDatabase) {
-      if (key === editURL) {
-        urlDatabase[key]["longURL"] = updateLongURL;
-      }
+  const updateShortURL = req.params.shortURL;
+  const newLongURL = checkURLFix(req.body.longURL);
+  const newUserID = req.session.user_id;
+  for (var keys in urlDatabase) {
+    if (keys === updateShortURL) {
+      urlDatabase[keys]["longURL"] = newLongURL;
     }
   }
   res.redirect("/urls");
@@ -218,50 +192,39 @@ app.post("/urls/:shortURL", (req, res) => {
 
 //CHECK THAT THE USER IS LOGGED IN IF CONDITION
 app.post("/urls/:shortURL/delete", (req, res) => {
-  const deleteURL = req.params.shortURL;
-  if (urlDatabase[deleteURL]["userID"] === req.session.user_id) {
-    delete urlDatabase[deleteURL];
-  }
+  const DeleteShortURL = req.params.shortURL;
+  delete urlDatabase[DeleteShortURL];
   res.redirect("/urls");
 });
 
 app.post("/login", (req, res) => {
   const userEmail = req.body.email;
-  const userPassword = req.body.password;
-  const userCheked = userCheker(userEmail, userPassword);
-  if (!userCheked) {
-    res.redirect("/register");
-  } else {
-    req.session.user_id = userCheked;
+  const userPW = req.body.password;
+  const checkedID = UserPWVerifier(userEmail, userPW);
+  if (checkedID) {
+    req.session.user_id = checkedID;
     res.redirect("/urls");
+  } else {
+    res.status(403).send("Are you sure you have the right info?! Try again");
   }
 });
 
 //pass along the username and password for register page
 //
 app.post("/register", (req, res) => {
-  const user_id = req.session.user_id;
-  const email = req.body.email;
-  const password = req.body.password;
-  const user = req.session.user;
-  const hashedPassword = bcrypt.hashSync(password, 10);
-  if (email === "" || password === "") {
-    res.status(400);
-    res.send("<html><body>Email or password cannot be blank</body></html>\n");
-  } else if (hasDuplicates(email, "email") === true) {
-    res.status(403);
-    res.send("<html><body>Email already exists please login</body></html>\n");
+  if (!req.body.email || !req.body.password) {
+    res.status(400).send("Please enter both email and password");
+  } else if (searchUserInfo(req.body.email, "email")) {
+    res.status(400).send("Email already in use");
   } else {
-    console.log("register user");
-    const id = generateRandomString();
-    let hashedPassword = bcrypt.hashSync(req.body.password, 10);
-    users[id] = {
-      id: id,
-      email: email,
-      password: hashedPassword
+    let uniqueID = generateRandomString();
+    let hashedPW = bcrypt.hashSync(req.body.password, 10);
+    users[uniqueID] = {
+      id: uniqueID,
+      email: req.body.email,
+      password: hashedPW
     };
-
-    req.session.user_id = id;
+    req.session.user_id = uniqueID;
     res.redirect("/urls");
   }
 });

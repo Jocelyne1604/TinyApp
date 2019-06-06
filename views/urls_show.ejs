@@ -3,26 +3,35 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <title>TinyApp</title>
 </head>
- <h1>TinyApp</h1>
-
-
 <body style="font-size:20px; padding:50px;">
-  <a  href="/urls">My URLs</a>
-  <a> | </a>
-  <a href="/urls/new">Create a new TinyURL</a>
- 
-  <h2>Success! TinyURL for <%=longURL[shortURL].longURL %></h2>
 
-  <p>
-    <%=shortURL %>
-  </p>
+<header>
+    <% include ./partials/_header %>
+</header>
 
-  <form method="POST" action="/urls/<%=shortURL %>">
-    <input id="adress" name="longURL" value="" placeholder="new adress"/>
-    <button class="btn btn-primary" type="submit" title="Edit">Edit</a>
+<% if ( userID ){ %>
+<a href="/urls/new">Create New TinyURL</a>
+  <% for( var key in urlDatabase) { %>
+  <form method="POST" action="">
+
+    <% if ( key === URLkey){ %>
+      <h3>Short URL: <%= key %></h3>
+      <h3>Long URL: <%= urlDatabase[key].longURL %> </h3>
+      <label for="longURL">Update your Long URL:</label>
+      <input type="text" name="longURL">
+      <button type="submit" class="btn btn-primary">Update</button>
   </form>
+    <% } else { %>
+    <% "The short URL you are trying to access does not exist. Please verify the URL and try again." %>
+    <% } %>
+  <% } %>
+<% } else { %>
+    <% return "To be able to edit a TinyApp URL you need to login first. Please visit: localhost:8080/login" %>
+<% } %>
 </body>
 </html>
